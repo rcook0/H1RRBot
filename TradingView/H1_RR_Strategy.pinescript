@@ -1,0 +1,42 @@
+//@version=5
+strategy("H1 RR Strategy [XAU, BTC, GJ]", overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=100)
+
+symbolSelect = input.string("XAUUSD", title="Symbol", options=["XAUUSD", "BTCUSD", "GBPJPY"])
+enableLondon = input.bool(true, title="London Session Only")
+enableNY = input.bool(true, title="New York Session Only")
+useH4Filter = input.bool(true, title="Confirm with H4 Trend")
+rrRatio = input.float(2.0, title="Risk/Reward Target", minval=1.0)
+slPoints = input.int(200, title="Stop Loss (points)")
+tpPoints = input.int(slPoints * rrRatio, title="Take Profit (points)")
+enableAlerts = input.bool(true, title="Enable Alerts")
+
+inSession = (not enableLondon or (time("1h") >= timestamp("GMT+0", year, month, dayofmonth, 8, 0) and time("1h") <= timestamp("GMT+0", year, month, dayofmonth, 12, 0))) or
+            (not enableNY or (time("1h") >= timestamp("GMT+0", year, month, dayofmonth, 13, 0) and time("1h") <= timestamp("GMT+0", year, month, dayofmonth, 17, 0)))
+
+h1EMA = ta.ema(close, 50)
+h4EMA = request.security(syminfo.tickerid, "240", ta.ema(close, 50))
+trendUp = close > h1EMA and (not useH4Filter or close > h4EMA)
+trendDown = close < h1EMA and (not useH4Filter or close < h4EMA)
+
+bullishCandle = close > open and close[1] < open[1]
+bearishCandle = close < open and close[1] > open[1]
+
+longCondition = trendUp and bullishCandle and inSession
+shortCondition = trendDown and bearishCandle and inSession
+
+if longCondition
+    strategy.entry("Long", strategy.long)
+    strategy.exit("TP/SL", from_entry="Long", stop=slPoints, limit=tpPoints)
+    if enableAlerts
+        alert("Long Entry Triggered on " + symbolSelect, alert.freq_once_per_bar)
+
+if shortCondition
+    strategy.entry("Short", strategy.short)
+    strategy.exit("TP/SL", from_entry="Short", stop=slPoints, limit=tpPoints)
+    if enableAlerts
+        alert("Short Entry Triggered on " + symbolSelect, alert.freq_once_per_bar)
+
+plot(h1EMA, title="H1 EMA 50", color=color.orange)
+plotshape(longCondition, title="Long Signal", location=location.belowbar, color=color.green, style=shape.triangleup, size=size.small)
+plotshape(shortCondition, title="Short Signal", location=location.abovebar, color=color.red, style=shape.triangledown, size=size.small)
+

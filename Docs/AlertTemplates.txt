@@ -1,0 +1,20 @@
+# Telegram Alert Webhook Template
+TELEGRAM_WEBHOOK_URL=https://api.telegram.org/bot<YOUR_BOT_TOKEN>/sendMessage
+
+# Example JSON payload:
+# {
+#   "chat_id": "<YOUR_CHAT_ID>",
+#   "text": "Trade Alert: {{strategy.order.action}} {{strategy.order.contracts}} contracts on {{ticker}} at price {{strategy.order.price}}"
+# }
+
+# Discord Alert Webhook Template
+DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/<YOUR_WEBHOOK_ID>/<YOUR_WEBHOOK_TOKEN>
+
+# Example JSON payload:
+# {
+#   "content": "Trade Alert: {{strategy.order.action}} {{strategy.order.contracts}} contracts on {{ticker}} at price {{strategy.order.price}}"
+# }
+
+GitHub Repository:
+https://github.com/rcook0/H1RRBot
+

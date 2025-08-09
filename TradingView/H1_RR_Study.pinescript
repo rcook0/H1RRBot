@@ -1,0 +1,33 @@
+//@version=5
+indicator("H1 RR Study [XAU, BTC, GJ]", overlay=true)
+
+symbolSelect = input.string("XAUUSD", title="Symbol", options=["XAUUSD", "BTCUSD", "GBPJPY"])
+enableLondon = input.bool(true, title="London Session Only")
+enableNY = input.bool(true, title="New York Session Only")
+useH4Filter = input.bool(true, title="Confirm with H4 Trend")
+enableAlerts = input.bool(true, title="Enable Alerts")
+
+inSession = (not enableLondon or (time("1h") >= timestamp("GMT+0", year, month, dayofmonth, 8, 0) and time("1h") <= timestamp("GMT+0", year, month, dayofmonth, 12, 0))) or
+            (not enableNY or (time("1h") >= timestamp("GMT+0", year, month, dayofmonth, 13, 0) and time("1h") <= timestamp("GMT+0", year, month, dayofmonth, 17, 0)))
+
+h1EMA = ta.ema(close, 50)
+h4EMA = request.security(syminfo.tickerid, "240", ta.ema(close, 50))
+trendUp = close > h1EMA and (not useH4Filter or close > h4EMA)
+trendDown = close < h1EMA and (not useH4Filter or close < h4EMA)
+
+bullishCandle = close > open and close[1] < open[1]
+bearishCandle = close < open and close[1] > open[1]
+
+longSignal = trendUp and bullishCandle and inSession
+shortSignal = trendDown and bearishCandle and inSession
+
+plot(h1EMA, title="H1 EMA 50", color=color.orange)
+plotshape(longSignal, title="Long Signal", location=location.belowbar, color=color.green, style=shape.triangleup, size=size.small)
+plotshape(shortSignal, title="Short Signal", location=location.abovebar, color=color.red, style=shape.triangledown, size=size.small)
+
+if enableAlerts and longSignal
+    alert("Live Long Signal - " + symbolSelect, alert.freq_once_per_bar)
+
+if enableAlerts and shortSignal
+    alert("Live Short Signal - " + symbolSelect, alert.freq_once_per_bar)
+

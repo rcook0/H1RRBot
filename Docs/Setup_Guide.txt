@@ -1,0 +1,44 @@
+H1 Risk/Reward Trading Bot – Setup Guide
+
+Quick Start:
+1. Load the Bot:
+   - cTrader: Import H1RRTraderBot.algo or H1RRTraderBot.cs and attach to H1 chart.
+   - TradingView: Paste H1_RR_Strategy.pinescript or H1_RR_Study.pinescript in Pine editor.
+2. Configure Parameters: Choose symbol, SL, RRR, session filters.
+3. Start Trading: Enable auto lot sizing or manual size, start alerts.
+
+Overview:
+This bot trades Gold (XAUUSD), Bitcoin (BTCUSD), and GBPJPY using a 1-hour strategy with 2:1 risk/reward.
+Entry signals are based on bullish/bearish candles and a 50 EMA filter, with optional H4 trend filter.
+
+Supported Platforms:
+- cTrader (.algo, .cs)
+- TradingView (.pinescript – strategy + alerts)
+
+Key Features:
+- H1/H4 trend filters
+- London & NY session filters
+- Auto lot sizing/manual override
+- Fixed SL and dynamic TP
+- Telegram/Discord alerts
+- Break-even and trailing logic ready (future)
+
+Installation – cTrader:
+1. Open cTrader Automate.
+2. Import the .algo or .cs file.
+3. Select symbol and adjust parameters.
+4. Attach to H1 chart and run.
+
+Installation – TradingView:
+1. Open Pine Script editor.
+2. Paste the strategy or study script.
+3. Add to chart.
+4. Create alerts using study for live alerts.
+
+Alerts:
+Use webhook URLs for Telegram and Discord as per AlertTemplates.txt.
+Replace placeholders with actual tokens.
+
+GitHub Repository:
+https://github.com/rcook0/H1RRBot
+
